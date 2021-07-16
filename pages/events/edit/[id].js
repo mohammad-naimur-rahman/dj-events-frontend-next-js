@@ -7,6 +7,9 @@ import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
 import Link from "next/link"
 import moment from 'moment'
+import Image from 'next/image';
+import { FaImage } from 'react-icons/fa';
+import Modal from '@/components/Modal';
 
 export default function EditEventPage({ evt }) {
   const router = useRouter()
@@ -19,6 +22,10 @@ export default function EditEventPage({ evt }) {
     date: evt.date,
     time: evt.time
   })
+
+  const [imagePreview, setImagePreview] = useState(evt.image ? evt.image.formats.thumbnail.url : null)
+
+  const [showModal, setShowModal] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -51,6 +58,7 @@ export default function EditEventPage({ evt }) {
 
   return (
     <Layout title="Add new event">
+
       <Link href='/events'>Go Back</Link>
       <h1>Edit event</h1>
       <ToastContainer position="bottom-left" />
@@ -132,6 +140,24 @@ export default function EditEventPage({ evt }) {
 
         <input type='submit' value='Update Event' className='btn' />
       </form>
+
+      <h2>Image Preview</h2>
+      {imagePreview ? (
+        <Image src={imagePreview} height={100} width={170} />
+      ) : (
+        <div>
+          <p>No image uploaded</p>
+        </div>
+      )}
+
+      <div>
+        <button className="btn-secondary" onClick={() => setShowModal(true)}>
+          <FaImage /> Set Image
+        </button>
+      </div>
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        IMAGE UPLOAD
+      </Modal>
     </Layout>
   )
 }
