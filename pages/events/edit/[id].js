@@ -6,17 +6,18 @@ import { useState } from "react"
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
 import Link from "next/link"
+import moment from 'moment'
 
-export default function AddEventPage() {
+export default function EditEventPage({ evt }) {
   const router = useRouter()
   const [values, setvalues] = useState({
-    name: '',
-    performers: '',
-    venue: '',
-    address: '',
-    descriptions: '',
-    date: '',
-    time: ''
+    name: evt.name,
+    performers: evt.performers,
+    venue: evt.venue,
+    address: evt.address,
+    descriptions: evt.descriptions,
+    date: evt.date,
+    time: evt.time
   })
 
   const handleSubmit = async (e) => {
@@ -29,8 +30,8 @@ export default function AddEventPage() {
       return
     }
 
-    const res = await fetch(`${API_URL}/events`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/events/${evt.id}`, {
+      method: 'PUT',
       headers: { 'Content-Type': "application/json" },
       body: JSON.stringify(values)
     })
@@ -51,7 +52,7 @@ export default function AddEventPage() {
   return (
     <Layout title="Add new event">
       <Link href='/events'>Go Back</Link>
-      <h1>Add event</h1>
+      <h1>Edit event</h1>
       <ToastContainer position="bottom-left" />
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -102,7 +103,7 @@ export default function AddEventPage() {
               type='date'
               name='date'
               id='date'
-              value={values.date}
+              value={moment(values.date).format('yyyy-MM-DD')}
               onChange={handleInputChange}
             />
           </div>
@@ -129,8 +130,19 @@ export default function AddEventPage() {
           ></textarea>
         </div>
 
-        <input type='submit' value='Add Event' className='btn' />
+        <input type='submit' value='Update Event' className='btn' />
       </form>
     </Layout>
   )
+}
+
+export async function getServerSideProps({ params: { id } }) {
+  const res = await fetch(`${API_URL}/events/${id}`)
+  const evt = await res.json()
+
+  return {
+    props: {
+      evt
+    }
+  }
 }
