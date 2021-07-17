@@ -52,7 +52,7 @@ export default function LoginPage() {
           <input type="submit" value="Login" className="btn" />
         </form>
         <p>
-          Don't have an account? <Link href='/account/register'>Register</Link>
+          Don&apos;t have an account? <Link href='/account/register'>Register</Link>
         </p>
       </div>
     </Layout>

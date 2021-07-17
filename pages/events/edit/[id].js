@@ -160,7 +160,7 @@ export default function EditEventPage({ evt, token }) {
 
       <h2>Image Preview</h2>
       {imagePreview ? (
-        <Image src={imagePreview} height={100} width={170} />
+        <Image src={imagePreview} height={100} width={170} alt="dj" />
       ) : (
         <div>
           <p>No image uploaded</p>

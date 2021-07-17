@@ -14,7 +14,7 @@ export default function MyEvent({ evt }) {
         <h1>{evt.name}</h1>
         {evt.image && (
           <div className={styles.image}>
-            <Image src={evt.image.formats.medium.url} width={960} height={600} />
+            <Image src={evt.image.formats.medium.url} width={960} height={600} alt="DJ" />
           </div>
         )}
 
@@ -34,32 +34,32 @@ export default function MyEvent({ evt }) {
 }
 
 
-export async function getStaticPaths() {
-  const res = await fetch(`${API_URL}/events`)
-  const events = await res.json()
-
-  const paths = events.map(evt => ({
-    params: { slug: evt.slug }
-  }))
-  return {
-    paths,
-    fallback: true
-  }
-}
-
-export async function getStaticProps({ params: { slug } }) {
-  const res = await fetch(`${API_URL}/events/?slug=${slug}`)
-  const events = await res.json()
-  return {
-    props: { evt: events[0] },
-    revalidate: 1
-  }
-}
-
-// export async function getServerSideProps({ query: { slug } }) {
-//   const res = await fetch(`${API_URL}/api/events/${slug}`)
+// export async function getStaticPaths() {
+//   const res = await fetch(`${API_URL}/events`)
 //   const events = await res.json()
+
+//   const paths = events.map(evt => ({
+//     params: { slug: evt.slug }
+//   }))
 //   return {
-//     props: { evt: events[0] }
+//     paths,
+//     fallback: true
 //   }
 // }
+
+// export async function getStaticProps({ params: { slug } }) {
+//   const res = await fetch(`${API_URL}/events/?slug=${slug}`)
+//   const events = await res.json()
+//   return {
+//     props: { evt: events[0] },
+//     revalidate: 1
+//   }
+// }
+
+export async function getServerSideProps({ query: { slug } }) {
+  const res = await fetch(`${API_URL}/events?slug=${slug}`)
+  const events = await res.json()
+  return {
+    props: { evt: events[0] }
+  }
+}

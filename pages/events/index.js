@@ -5,7 +5,7 @@ import Pagination from '@/components/Pagination'
 const PER_PAGE = 2
 
 export default function EventsPage({ events, total, page }) {
-
+  console.log(events);
   return (
     <Layout title="man">
       <h1>Events</h1>
