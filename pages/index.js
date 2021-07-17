@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export default function Home({ events }) {
   return (
-    <Layout title="man">
+    <Layout title="DJ Events">
       <h1>Upcoming events</h1>
       {!events.length && <h3>No events to show</h3>}
       {

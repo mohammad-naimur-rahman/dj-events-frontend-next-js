@@ -5,7 +5,7 @@ import Header from './Header'
 import Showcase from './Showcase'
 import { useRouter } from 'next/router'
 
-export default function Layout({ title, keywords, description, children }) {
+export default function Layout({ title = "DJ Events", keywords, description, children }) {
   const router = useRouter();
   return (
     <div>
