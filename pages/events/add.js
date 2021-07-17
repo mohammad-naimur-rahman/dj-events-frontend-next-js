@@ -1,59 +1,69 @@
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Layout from "@/components/Layout"
-import { useRouter } from "next/router"
-import { useState } from "react"
+import { parseCookies } from '@/helpers/index'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import Layout from '@/components/Layout'
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
-import Link from "next/link"
 
-export default function AddEventPage() {
-  const router = useRouter()
-  const [values, setvalues] = useState({
+export default function AddEventPage({ token }) {
+  const [values, setValues] = useState({
     name: '',
     performers: '',
     venue: '',
     address: '',
-    descriptions: '',
     date: '',
-    time: ''
+    time: '',
+    descriptions: '',
   })
+
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const hasEmptyFields = Object.values(values).some(element => element === '')
+    // Validation
+    const hasEmptyFields = Object.values(values).some(
+      (element) => element === ''
+    )
 
     if (hasEmptyFields) {
       toast.error('Please fill in all fields')
-      return
     }
 
     const res = await fetch(`${API_URL}/events`, {
       method: 'POST',
-      headers: { 'Content-Type': "application/json" },
-      body: JSON.stringify(values)
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values),
     })
 
     if (!res.ok) {
-      toast.error('Something went wrong');
+      if (res.status === 403 || res.status === 401) {
+        toast.error('No token included')
+        return
+      }
+      toast.error('Something Went Wrong')
     } else {
       const evt = await res.json()
       router.push(`/events/${evt.slug}`)
     }
   }
 
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target
-    setvalues({ ...values, [name]: value })
+    setValues({ ...values, [name]: value })
   }
 
   return (
-    <Layout title="Add new event">
+    <Layout title='Add New Event'>
       <Link href='/events'>Go Back</Link>
-      <h1>Add event</h1>
-      <ToastContainer position="bottom-left" />
-
+      <h1>Add Event</h1>
+      <ToastContainer />
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
           <div>
@@ -119,7 +129,7 @@ export default function AddEventPage() {
         </div>
 
         <div>
-          <label htmlFor='description'>Event Description</label>
+          <label htmlFor='descriptions'>Event Description</label>
           <textarea
             type='text'
             name='descriptions'
@@ -133,4 +143,14 @@ export default function AddEventPage() {
       </form>
     </Layout>
   )
+}
+
+export async function getServerSideProps({ req }) {
+  const { token } = parseCookies(req)
+
+  return {
+    props: {
+      token,
+    },
+  }
 }
